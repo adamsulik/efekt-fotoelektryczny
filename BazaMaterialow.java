@@ -1,6 +1,6 @@
 package Interfejs;
 
-import java.beans.Statement;
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -15,36 +15,39 @@ public class BazaMaterialow {
 		
 	}
 
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) throws SQLException, ClassNotFoundException {
 		Connection con = null;
 		
 		try {
-		
-		 con = DriverManager.getConnection( "jdbc:h2:metale", "sa", ""); //nie dziala, nie wiem jak odniesc sie do tej bazy
+		//Class.forName("com.h2.jdbc.Driver");
+		 con = DriverManager.getConnection( "jdbc:h2:./metale", "sa", ""); //nie dziala, nie wiem jak odniesc sie do tej bazy
 		
 	Statement stmt = (Statement) con.createStatement();
 	
-	((java.sql.Statement) stmt).executeUpdate("DROP TABLE IF EXISTS METALE");
-	 ((java.sql.Statement) stmt).executeUpdate("CREATE TABLE METALE ( IN INT PRIMARY KEY, NAZWA VARCHAR(30))");
-	 ((java.sql.Statement) stmt).executeUpdate("INSERT INTO METALE VALUES (1, 'Cs - W = 2,14 eV')");
-	 ((java.sql.Statement) stmt).executeUpdate("INSERT INTO METALE VALUES (2, 'Pb - W = 4,25 eV')");
-	 ((java.sql.Statement) stmt).executeUpdate("INSERT INTO METALE VALUES (3, 'Au - W = 5,2 eV')");
-	 ((java.sql.Statement) stmt).executeUpdate("INSERT INTO METALE VALUES (4, 'Mg - W = 3,66 eV')");
-	 ((java.sql.Statement) stmt).executeUpdate("INSERT INTO METALE VALUES (5, 'K - W = 2,29 eV')");
+      stmt.executeUpdate("DROP TABLE IF EXISTS METALE");
+	  stmt.executeUpdate("CREATE TABLE METALE (ID INT, NAZWA VARCHAR(30), PRIMARY KEY (ID))");
+	  stmt.executeUpdate("INSERT INTO METALE VALUES (0, 'Cs - W = 2,14 eV')");
+	  stmt.executeUpdate("INSERT INTO METALE VALUES (1, 'Pb - W = 4,25 eV')");
+	  stmt.executeUpdate("INSERT INTO METALE VALUES (2, 'Au - W = 5,2 eV')");
+	  stmt.executeUpdate("INSERT INTO METALE VALUES (3, 'Mg - W = 3,66 eV')");
+	  stmt.executeUpdate("INSERT INTO METALE VALUES (4, 'K - W = 2,29 eV')");
+	  System.out.println("stworzono");
+	  
 	
-	ResultSet materialy = ((java.sql.Statement) stmt).executeQuery(" SELECT NAZWA FROM METALE"); 
-	
-	ResultSetMetaData md = (ResultSetMetaData) ((Connection) stmt).getMetaData();
-	
+	ResultSet materialy =  stmt.executeQuery("SELECT NAZWA FROM METALE"); 
+	System.out.println("stworzono");
+	ResultSetMetaData md =  materialy.getMetaData();
+	System.out.println("stworzono");
 	while (materialy.next()) {
-		for (int i = 0; i <= md.getColumnCount(); i++) System.out.print(materialy.getObject(i) + ",");
+		//for (int i = 1; i <= 5; i++) 
+			System.out.println(materialy.getObject(1));
+			
 		
 		
 	}
 		
 		
-		// TODO Auto-generated method stub
-
+		
 	}finally {
 		if (con != null) 
 			
