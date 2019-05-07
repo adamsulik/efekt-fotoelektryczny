@@ -1,4 +1,6 @@
 package analiza;
+//Kod przygotowany przez Adama
+
 import java.lang.Math;
 import java.util.Scanner;
 
@@ -12,7 +14,7 @@ public class Matematyka {
 		napiecieWsteczne = 0;
 	}
 
-	public static void main(String[] args) {
+	/*public static void main(String[] args) {
 		int cykl = 0;
 		Matematyka matematyka = new Matematyka();
 		Scanner sc = new Scanner(System.in);
@@ -27,7 +29,7 @@ public class Matematyka {
 			System.out.println("Wartosc energii elektronów: " + matematyka.obliczEnergie());
 		}
 
-	}
+	}*/
 	
 	public void setNapiecieWsteczne(int setter) {
 		napiecieWsteczne = setter;
@@ -39,9 +41,10 @@ public class Matematyka {
 	
 	public double obliczEnergie() {
 		double energia = 0;
-		energia = zadanafala.czestotliwosc() * Math.pow(6.63, -34);
+		energia = zadanafala.czestotliwosc() * 4.13 * Math.pow(10, -15) ;//energia w eV
+		System.out.println("Energia: " + energia + "\n");
 		energia -= zadany.energiaWyjscia;
-		energia -= napiecieWsteczne * Math.pow(1.6, -19);
+		energia -= napiecieWsteczne;
 		
 		if(energia < 0) { energia = 0; }
 		
@@ -50,18 +53,18 @@ public class Matematyka {
 	
 	
 	
-	static int napiecieWsteczne = 0;
+	public static int napiecieWsteczne = 0;
 	static Material zadany;
-	Fala zadanafala;
+	public Fala zadanafala;
 	double energiaElektronu;
 	
-	class Fala{
-		int dlugosc = 400;
-		int wykladnik = -9;
-		double czestotliwosc() {return Math.pow((double)dlugosc, (double)wykladnik) / 300000; }
+	public class Fala{
+		public int dlugosc = 400;
+		int wykladnik = -9; //nanometry
+		public double czestotliwosc() {return 3*Math.pow(10, 8) / (dlugosc * Math.pow((double)10, (double)wykladnik)); }
 	}
 	class Material{
 		String nazwa = "Nazwa Materialu";
-		float energiaWyjscia = 0;
+		float energiaWyjscia = (float) 2.14;
 	}
 }
