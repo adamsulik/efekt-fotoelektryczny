@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.KeyEvent;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -21,7 +23,10 @@ import analiza.Matematyka;
 
 public class Okno extends JFrame {
 	
+	//Tworzy odpowiednie elementy
 	Matematyka matematyka = new Matematyka();
+	PanelOne mainPanel = new PanelOne();
+	
 	JMenuItem wczytywanie = new JMenuItem ("Wczytaj...");
 	JMenuItem zapisywanie = new JMenuItem ("Zapisz jako");
 	JLabel wavelength = new JLabel("D³ugoœæ Fali (nm):");
@@ -29,10 +34,11 @@ public class Okno extends JFrame {
 	JLabel napiecie = new JLabel("Napiêcie wsteczne (V):");
 	JSlider RegulacjaNapiecia = new JSlider(0,5, 1);
 	JComboBox <String> lista = new JComboBox <String>();
-	JPanel animacja = new JPanel();
-	/**
-	 * 
-	 */
+	
+	//JPanel animacja = new JPanel();
+	
+	 
+	 
 	private static final long serialVersionUID = 1L;
 
 	public Okno() throws HeadlessException {
@@ -80,20 +86,23 @@ public class Okno extends JFrame {
 		
 		this.add(p1, BorderLayout.LINE_END);
 		this.add(p2, BorderLayout.PAGE_START);
-		this.add(animacja, BorderLayout.CENTER);
+		this.add(mainPanel, BorderLayout.CENTER);
 		
 		
 		matematyka.zadanafala.dlugosc = WavelengthRegulation.getValue();
 		wavelength.setText("D³ugoœæ Fali(nm): " + matematyka.zadanafala.dlugosc);
-		animacja.setBackground( LenghtToRGB.returnRGB(matematyka.zadanafala.dlugosc) );
 		
+		//Ustawia d³ugoœæ fali w g³ównym panelu
+		mainPanel.waveLength = WavelengthRegulation.getValue();
+		
+		//Listener do slidera d³ugoœci fali
 		WavelengthRegulation.addChangeListener(new ChangeListener() {
 
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
 				matematyka.zadanafala.dlugosc = WavelengthRegulation.getValue();
+				mainPanel.waveLength = WavelengthRegulation.getValue();
 				wavelength.setText("D³ugoœæ Fali(nm): " + matematyka.zadanafala.dlugosc);
-				animacja.setBackground( LenghtToRGB.returnRGB(matematyka.zadanafala.dlugosc) );
 				System.out.println("Energia elektronów wynosi: " + matematyka.obliczEnergie() + "eV");
 				System.out.println("Czêstotliwoœæ fali wynosi: " + matematyka.zadanafala.czestotliwosc() + "\n");
 			}
@@ -119,7 +128,11 @@ public class Okno extends JFrame {
 
 	public static void main(String[] args) {
 		Okno okienko = new Okno();
-		okienko.setSize(800, 800);
+		okienko.setSize(800, 600);
+		
+		ExecutorService exec = Executors.newFixedThreadPool(1);
+		exec.execute(okienko.mainPanel);
+		
 		okienko.setVisible(true);
 	}
 
