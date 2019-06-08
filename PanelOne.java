@@ -15,6 +15,7 @@ import java.awt.geom.Line2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
@@ -30,6 +31,14 @@ public class PanelOne extends JPanel implements Runnable{
 		bulbY = 30;
 	BasicStroke bs1 = new BasicStroke(3);
 	
+	//Stringi do napisania na panelu
+	double energiaElektronu = 0;
+	String napiecieWsteczne = "0.0",
+			energiaElektronuString = null;
+	
+    private static DecimalFormat df2 = new DecimalFormat("#.##");
+
+	
 	//Dane do pola do usuniêcia
 	int xBorderCoordinates = 78,
 		yBorderCoordinates = 36;
@@ -38,7 +47,7 @@ public class PanelOne extends JPanel implements Runnable{
 		borderWidth = 276;
 	
 	//prêdkoœæ elektronu i jego promieñ
-	int vel = 5,
+	int vel = 30,
 		radius = 35;
 	//wspolrzedne srodka elektronu
 	static final int startx0 = 400;
@@ -58,8 +67,10 @@ public class PanelOne extends JPanel implements Runnable{
 	
 	
 	//Konstruktor
-	public PanelOne() {
-			
+	public PanelOne(double energiaPoczatkowa) {
+		
+		energiaElektronu = energiaPoczatkowa;
+		energiaElektronuString = df2.format(energiaElektronu);
 		electronImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		mainImg = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		importImage();
@@ -87,9 +98,9 @@ public class PanelOne extends JPanel implements Runnable{
 		g.drawOval(bulbX, bulbY, 98, 113);
 
 
-		/*g.setColor(Color.black);
-		g2d.draw(new Line2D.Float(456, 135, 484, 135));
-		g.drawLine(456, 135, 484, 135);*/
+		g.drawString(napiecieWsteczne + "V", 180, 240);
+		energiaElektronuString = "" + df2.format(energiaElektronu);
+		g.drawString(energiaElektronu + "eV", 50, 400);
 	}
 
 		
@@ -167,8 +178,10 @@ public class PanelOne extends JPanel implements Runnable{
 		boolean czynny = true;
 		
 		while(czynny) {
+			vel = (int)(energiaElektronu * 30);
 			paintElectron();
 			repaint();
+			Okno.toolkit.sync();
 			try {
 				Thread.sleep(pauza);
 			} catch (InterruptedException e) {

@@ -1,4 +1,4 @@
-package zaliczenie;
+package GUI;
 
 public class Polski extends Lang {
 
@@ -6,13 +6,11 @@ public class Polski extends Lang {
 		// TODO Auto-generated constructor stub
 		
 		super.MenuOpcje = "Opcje";
-		super.DlugoscFali = "DÅ‚ugoÅ›Ä‡ fali (nm)";
+		super.DlugoscFali = "D³ugoœæ fali (nm)";
 		super.MenuWczytaj = "Wczytaj";
 		super.MenuZapisz = "Zapisz";
-		super.NapiecieWsteczne = "NapiÄ™cie Wsteczne (V)";
-		super.WyborMatrialu = "WybÃ³r MateriaÅ‚u";
+		super.NapiecieWsteczne = "Napiêcie Wsteczne (V)";
+		super.WyborMatrialu = "Wybór Materia³u";
 	}
-
-	
 
 }

@@ -1,4 +1,4 @@
-package zaliczenie;
+package GUI;
 
 public class Lang {
 	
