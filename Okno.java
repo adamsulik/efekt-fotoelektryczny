@@ -1,14 +1,26 @@
-package GUI;
+package zaliczenie;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -20,8 +32,9 @@ import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileSystemView;
 
-import analiza.Matematyka;
+import zaliczenie.Matematyka;
 
 public class Okno extends JFrame {
 	
@@ -42,13 +55,18 @@ public class Okno extends JFrame {
 	JSlider RegulacjaNapiecia = new JSlider(0,10, 0);
 	JComboBox <String> lista = new JComboBox <String>();
 	
-	//JPanel animacja = new JPanel();
+	String czytaj = "";
+	String[] odczytane = null;
+	
+	String[] danedozapisu = null;
 	
 	 
 	 
 	private static final long serialVersionUID = 1L;
 
-	public Okno() throws HeadlessException {
+	public Okno() throws HeadlessException , SQLException {
+		
+		BazaMaterialow bazamaterialow = new BazaMaterialow();
 		
 		JMenuBar menubar = new JMenuBar();
 		JMenu menu = new JMenu(nameSpace.MenuOpcje);
@@ -60,6 +78,69 @@ public class Okno extends JFrame {
 		
 		menu.add(wczytywanie);
 		menu.add(zapisywanie);
+		
+		wczytywanie.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				JFileChooser jfc = new JFileChooser (FileSystemView.getFileSystemView().getHomeDirectory());
+				jfc.setDialogTitle("Wybierz plik do odczytania:");
+				jfc.showOpenDialog(null);
+			 	jfc.getSelectedFile();
+			
+			try {
+				InputStreamReader isr =
+						new InputStreamReader(new FileInputStream(jfc.getSelectedFile().getPath()), 
+								Charset.forName("UTF-8").newDecoder());
+				BufferedReader bufor = new BufferedReader(isr);
+				while ((czytaj = bufor.readLine()) != null){
+					odczytane = czytaj.split("");
+					
+					 matematyka.zadanafala.dlugosc = Integer.parseInt(odczytane[0]);
+					 Matematyka.napiecieWsteczne = Integer.parseInt(odczytane[1]);
+					
+					
+				}
+				
+				
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			}
+			
+			
+			});
+		
+		zapisywanie.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				FileWriter fw = null;
+				try {
+					fw = new FileWriter("zapisane_dane");
+					danedozapisu[0] = Integer.toString(matematyka.zadanafala.dlugosc);
+					danedozapisu[1] = Integer.toString(Matematyka.napiecieWsteczne);
+					danedozapisu[0] = Double.toString(matematyka.energiaElektronu);
+					
+					BufferedWriter bw = new BufferedWriter(fw);
+					for (int i = 0; i < danedozapisu.length; i++) { 
+						bw.write(danedozapisu[i]);
+						bw.newLine();
+					}
+				}catch (IOException k) {
+					k.printStackTrace();
+				}
+				
+				// TODO Auto-generated method stub
+				
+			}
+			
+		});
 		
 		menubar.add(menu);
 		this.setJMenuBar(menubar);
@@ -84,11 +165,47 @@ public class Okno extends JFrame {
 		
 		JPanel p2 = new JPanel(new GridLayout(2,1));
 		
-		lista.addItem("Cs - W = 2,14 eV");
-		lista.addItem("Pb - W = 4,25 eV");
-		lista.addItem("Au - W = 5,2 eV");
-		lista.addItem("K - W = 2,29 eV");
-		lista.addItem("Mg - W = 3,66 eV");
+
+			lista.addItem(bazamaterialow.materials[1]);
+			lista.addItem(bazamaterialow.materials[2]);
+			lista.addItem(bazamaterialow.materials[3]);
+			lista.addItem(bazamaterialow.materials[4]);
+			lista.addItem(bazamaterialow.materials[5]);
+		
+		lista.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				
+				// TODO Auto-generated method stub
+				
+				String s = (String) lista.getSelectedItem();
+				
+				switch (s) {
+					case "Cs-W=2,14eV":
+						matematyka.zadany.energiaWyjscia = Float.parseFloat(bazamaterialow.values[1])/100;
+						break;
+					case "Pb-W=4,25eV":
+						matematyka.zadany.energiaWyjscia = Float.parseFloat(bazamaterialow.values[2])/100;
+						break;
+					case "Au-W=5,2eV":
+						matematyka.zadany.energiaWyjscia = Float.parseFloat(bazamaterialow.values[3])/100;
+						break;
+					case "Mg-W=3,66eV":
+						matematyka.zadany.energiaWyjscia = Float.parseFloat(bazamaterialow.values[4])/100;
+						break;
+					case "K-W=2,29eV":
+						matematyka.zadany.energiaWyjscia = Float.parseFloat(bazamaterialow.values[5])/100;
+						break;
+				}
+						
+				
+			
+				System.out.println(matematyka.zadany.energiaWyjscia);
+			}
+		});
+
+		
 		JLabel l3 = new JLabel(nameSpace.WyborMatrialu + ": ");
 		p2.add(l3);
 		p2.add(lista);
@@ -101,10 +218,10 @@ public class Okno extends JFrame {
 		matematyka.zadanafala.dlugosc = WavelengthRegulation.getValue();
 		wavelength.setText(nameSpace.DlugoscFali + ": " + matematyka.zadanafala.dlugosc);
 		
-		//Ustawia d³ugoœæ fali w g³ównym panelu
+		//Ustawia dÂ³ugoÅ“Ã¦ fali w gÂ³Ã³wnym panelu
 		mainPanel.waveLength = WavelengthRegulation.getValue();
 		
-		//Listener do slidera d³ugoœci fali
+		//Listener do slidera dÂ³ugoÅ“ci fali
 		WavelengthRegulation.addChangeListener(new ChangeListener() {
 
 			@Override
@@ -112,8 +229,8 @@ public class Okno extends JFrame {
 				matematyka.zadanafala.dlugosc = WavelengthRegulation.getValue();
 				mainPanel.waveLength = WavelengthRegulation.getValue();
 				wavelength.setText(nameSpace.DlugoscFali + ": " + matematyka.zadanafala.dlugosc);
-				//System.out.println("Energia elektronów wynosi: " + matematyka.obliczEnergie() + "eV");
-				//System.out.println("Czêstotliwoœæ fali wynosi: " + matematyka.zadanafala.czestotliwosc() + "\n");
+				//System.out.println("Energia elektronÃ³w wynosi: " + matematyka.obliczEnergie() + "eV");
+				//System.out.println("CzÃªstotliwoÅ“Ã¦ fali wynosi: " + matematyka.zadanafala.czestotliwosc() + "\n");
 				mainPanel.energiaElektronu = matematyka.obliczEnergie();
 			}
 		});
@@ -124,8 +241,8 @@ public class Okno extends JFrame {
 			public void stateChanged(ChangeEvent arg0) {
 				matematyka.setNapiecieWsteczne( (double)RegulacjaNapiecia.getValue()/10 );
 				napiecie.setText(nameSpace.NapiecieWsteczne + ": " + Matematyka.napiecieWsteczne + "\n");
-				System.out.println("Energia elektronów wynosi: " + matematyka.obliczEnergie() + "eV");
-				System.out.println("Czêstotliwoœæ fali wynosi: " + matematyka.zadanafala.czestotliwosc() + "\n");
+				System.out.println("Energia elektronÃ³w wynosi: " + matematyka.obliczEnergie() + "eV");
+				System.out.println("CzÃªstotliwoÅ“Ã¦ fali wynosi: " + matematyka.zadanafala.czestotliwosc() + "\n");
 				mainPanel.napiecieWsteczne = ("" + (double)RegulacjaNapiecia.getValue()/10);
 				mainPanel.energiaElektronu = matematyka.obliczEnergie();
 			}
@@ -138,7 +255,7 @@ public class Okno extends JFrame {
 	
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws HeadlessException, SQLException {
 		
 		String [] languageSelectorButtons = {"Polski", "English"};
 		progLanguage = JOptionPane.showOptionDialog(null, "Select Language: ", "Welcome", JOptionPane.PLAIN_MESSAGE, 
