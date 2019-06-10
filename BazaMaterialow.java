@@ -17,7 +17,7 @@ public class BazaMaterialow {
 	
 	public  String[] materials = null;
 	public  String[] values = null;
-	public int[] values1 = null;
+
 	Connection con = null;
 
 	public BazaMaterialow() throws SQLException {
@@ -47,18 +47,17 @@ public class BazaMaterialow {
 		
 		materials = new String[md.getColumnCount()];
 		values = new String[5];
-		values1 = new int[5];
+		
 		
 		
 		
 		while (materialy.next()) {
 			
-				//System.out.println(materialy.getObject(1));
+				
 				mat += " " + materialy.getObject(1);
 				
 				
-				//for(int ii = 0; ii<=4; ii++)
-				//materials[ii] = "" + materialy.getObject(1);
+				
 				
 			
 				}
@@ -69,19 +68,19 @@ public class BazaMaterialow {
 		
 		while (wartosci.next()) {
 			
-				//System.out.println(wartosci.getObject(1));
+				
 				war += " " + wartosci.getObject(1);
-				//values[i] = "" + wartosci.getObject(2);
+				
 				
 			
 				}
 		System.out.println(war);
 		
-		//int fu = Integer.parseInt(war);
+		
 		
 		
 		 values = war.split(" ");
-		// values1[i] = Integer.parseInt(values[i]);
+		
 		 for(int i = 0; i<=5; i++) System.out.println(values[i]);
 			
 			
